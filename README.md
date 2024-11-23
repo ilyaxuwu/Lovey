@@ -7,7 +7,7 @@ Download Here:
 // @name         Lovey Mod - New The Best Hack of sploop.io!
 // @namespace    http://tampermonkey.net/
 // @version      Final
-// @description  Sploops nightmare
+// @description  https://loveymod.glitch.me
 // @author       ilyax
 // @require      https://cdn.jsdelivr.net/npm/msgpack-lite@0.1.26/dist/msgpack.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
@@ -23,18 +23,35 @@ loadstring("https://raw.githubusercontent.com/ilyaxuwu/Lovey/refs/heads/main/lov
 
 Features:
 - Smart AI Autoheal Supports any pings!
+- Auto Placer: Places trap and spike automaticly for you
 - Musket Sync: Auto shoots musket to a enemy when their health is lower than musket's damage.
 - Naginata Sync: Auto hits to a enemy when their health is lower than naginata's damage with **Berserker** hat
-- Auto Replaces: Automaticly replaces your object when anyone's object has breaked
-- Kill Chat: Credits to Me Mega Noob!!!!!
+- Auto Replaces: Automaticly replaces your object when anyone's / your object has breaked
+- Kill Chat: Automaticly gives a message to ingame staffs.
 - Auto Break: Automaticly breaks a trap when you are trapped.
-- Aimbot: Auto aims when enemy is near (Good to bowers and base makers)
-- Legit mode: When someone is threading you about admins this feature are good to make you legit.
-- Legit Autoheal: Autoheals legitimatly to avoid bans
-- Place Assist: Places a objects like macro But Legitimatly to avoid bans.
-- Autoclicker: Test
-- Night Mode: Makes the game night mode & Stars are falling down and moon too
+- Aimbot: Auto aims when enemy is near (Good feature for 7/24 bow player)
+- Legit mode: Make yourself look like a legit player to avoid bans.
+- Legit Autoheal: Autoheals legitimatly to avoid bans (Legit Mode required)
+- Place Assist: Places a objects like macro But Legitimatly to avoid bans. (Legit Mode required)
+- Autoclicker: Autoclicks for you (buggy rn, fix soon if possible) (Legit Mode required) 
+- Night Mode: Makes the game night mode with beautiful stars that falls down.
 - Macros: You can place any objects like trap, spike etc etc you can change **keybinds** and **cps**.
 - HatMacros: You can equip any hats that you like etc etc you can change **keybinds**.
 - Mobile Support: We are working on a mobile support.
-- This script is also Auto updates so you dont need to redownload over over and over again 
+- Damage Effect: Shows the damage effect for any healths (Like csgo, doors, rivals)
+- Kill Effect: Shows the kill effect when you have eliminated somneone
+- TargetHUD: Searchs near enemy to show infos about it.
+- Array-List: Lists Info's about your player and the script.
+- This script is also Auto updates so you dont need to redownload over over and over again
+
+Commands:
+- .l AHHP = Changes Autoheal High-Ping and Spam mode
+- .l HAL = Hides / Shows Array List
+- .l HKE = Hides / Show Kill Effect
+- .l DMS = Changes to dobule / Single musket shoots (If there is another lovey mod user or other hacks that has musket sync)
+- .l DMS = Changes Musket shot to Dobule (To hit by another lovey mod user) & Single
+- .l HDE = Hides / Shows Damage Effect
+- .l ABT = Toggle Anti Trap
+- .l TAB = Toggle Place Trap After Breaked
+- .l ABS = Toggle Auto break spike
+- .l ABW = Change the weapon to break (It looks like still breaking by secondary when you change it to primary but Its not.)
