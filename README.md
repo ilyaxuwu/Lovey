@@ -1,6 +1,8 @@
 # Lovey
 Lovey mod is a advanced script for sploop.io Every features are there that you would like!
 
+Website: https://loveymod.glitch.me/
+
 Download Here:
 ```js
 // ==UserScript==
@@ -55,3 +57,12 @@ Commands:
 - .l TAB = Toggle Place Trap After Breaked
 - .l ABS = Toggle Auto break spike
 - .l ABW = Change the weapon to break (It looks like still breaking by secondary when you change it to primary but Its not.)
+
+Credits: 
+- Ilyax => Owner, Every Features, UI Design, Loadstring (To load a script from the website.)
+- Bianos => Developer, Websocket set-ups.
+- Emre => Keybind manager.
+
+Small Credits:
+- Delphi => Autoheal from your way
+- Fizzixww => Spinning spikes
