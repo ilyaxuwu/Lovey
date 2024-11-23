@@ -2,7 +2,7 @@
 // @name         Lovey Mod - New The Best Hack of sploop.io!
 // @namespace    http://tampermonkey.net/
 // @version      Final
-// @description  Sploops nightmare
+// @description  https://loveymod.glitch.me
 // @author       ilyax
 // @require      https://cdn.jsdelivr.net/npm/msgpack-lite@0.1.26/dist/msgpack.min.js
 // @require       https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
@@ -34,9 +34,26 @@ v0.3:
 - Autoplacer placing trap angles changed
 - Added shadows
 - Added high ping autoheal, now It will going to spam-heal per 200 millisecond to prevent high millisecond responding.
+- Added Kill Effect (Disabled by default)
+- Added Spam Autoheal If your ping is like around 70-100 Use this autoheal.
+- KillChat now will auto insults ingame staffs.
+- Array list will be hidden in default (Type .l HAL) when you need to enable.
+- Added Dobule Musket shots. When you with another lovey mod you can execute (.l DMS) it. (another lovey mod user should also execute it tho.)
+- Added Damage Effect
+- Targethud bug-fixes
+- Targethud new ui
 
 Menu:
 - Added Pumkin hat support
+
+New Commands:
+     - .l AHHP = Changes Autoheal High-Ping and Spam mode
+     - .l HAL = Hides / Shows Array List
+     - .l HKE = Hides / Show Kill Effect
+     - .l DMS = Changes to dobule / Single musket shoots (If there is another lovey mod user or other hacks that has musket sync)
+     - .l DMS = Changes Musket shot to Dobule (To hit by another lovey mod user) & Single
+     - .l HDE = Hides / Shows Damage Effect
+
 v0.2:
 
 **Biggest Change**: There is commands in lovey mod and there is:
@@ -67,6 +84,9 @@ For The Entrie script:
 v0.1:
 First lovey mod
 */
+
+const canvas = document.getElementById("game-canvas");
+const ctx = canvas.getContext("2d");
 
 let backgroundDiv = document.createElement("div");
 
@@ -682,7 +702,7 @@ transform: translate(-50%, -50%);
 
     let statusMenu = document.createElement("div");
     statusMenu.style.position = "fixed";
-    statusMenu.style.display = "absolute";
+    statusMenu.style.display = "none";
     statusMenu.style.width = "300px";
     statusMenu.style.height = "auto";
     statusMenu.style.top = "30%";
@@ -749,49 +769,102 @@ transform: translate(-50%, -50%);
     // Targethud
 
     let targethud = document.createElement("div");
-    targethud.id = "targethud"
+    targethud.id = "targethud";
     targethud.style = `
-width: 400px;
-height: 150px;
-border: 10px solid white;
-border-radius: 20px;
-background-color: #212121;
-position: absolute;
-left: 55%;
-top: 550px;
-z-index: 3;
-transition: 0.3s;
-opacity: 0;
+  width: 400px;
+  height: 250;
+  border: 10px solid white;
+  border-radius: 20px;
+  background-color: #212121;
+  backdrop-filter: blur(10px);
+  position: absolute;
+  left: 55%;
+  top: 550px;
+  z-index: 3;
+  transition: 0.3s;
+  opacity: 0;
 `;
 
     targethud.innerHTML = `
-<style>
-#name {
-  text-align: center;
-  font-size: 25px;
-  color: white;
-  font-weight: bolder;
-}
-.hud {
-  position: relative;
-  left: 10px;
-  width: 360px;
-  height: 30px;
-}
+  <style>
+    #name {
+      text-align: center;
+      font-size: 25px;
+      color: white;
+      font-weight: bolder;
+    }
+    .hud {
+      position: relative;
+      left: 10px;
+      width: 360px;
+      height: 30px;
+    }
+    progress {
+      width: 80%;
+      height: 10px;
+      border-radius: 10px;
+      appearance: none;
+    }
+    #health::-webkit-progress-bar {
+      background-color: #3e3e3e;
+      border-radius: 10px;
+    }
+    #health::-webkit-progress-value {
+      background-color: #ff2b2b;
+      border-radius: 10px;
+      transition: width 0.3s ease-in-out;
+    }
+    #health::-moz-progress-bar {
+      background-color: #ff2b2b;
+      border-radius: 10px;
+      transition: width 0.3s ease-in-out;
+    }
 
-p {
+    #distance::-webkit-progress-bar {
+      background-color: #3e3e3e;
+      border-radius: 10px;
+    }
+    #distance::-webkit-progress-value {
+      background-color: #f4f147;
+      border-radius: 10px;
+      transition: width 0.3s ease-in-out;
+    }
+    #distance::-moz-progress-bar {
+      background-color: #f4f147;
+      border-radius: 10px;
+      transition: width 0.3s ease-in-out;
+    }
 
-}
-</style>
+    .progress-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .progress-wrapper span {
+      margin-left: 10px;
+      font-size: 20px;
+      color: white;
+    }
+  </style>
 
-<p id="name">Undefined</p>
-<br>
-<progress id="health" class="hud" value="50" max="100"></progress>
-<br>
-<p id="distance">Distance: null</p>
-<p id="aimangle">: null</p>
-<p id="nowstatus">: null</p>
+  <p id="name">Undefined</p>
+  <br>
+  <div class="progress-wrapper">
+    <progress id="health" class="hud" value="50" max="100"></progress>
+    <span>❤️</span>
+  </div>
+  <br>
+  <div class="progress-wrapper">
+    <progress id="distance" class="hud" value="50" max="300"></progress>
+    <span>↔</span>
+  </div>
+  <br>
+  <p id="aimangle">: null</p>
+  <p id="nowstatus">: null</p>
 `;
+
+    document.body.appendChild(targethud);
 
 
 
@@ -911,19 +984,19 @@ p {
         Storage.set("Lovey", keyBinds)
     });
 
-document.getElementById("openmenu").addEventListener("click", toggleMenu); // Open menu by clicking the button for mobile players
-document.addEventListener("keydown", (e) => { // Open menu by pressing esc
-    if (e.keyCode == 27) {
-        toggleMenu();
-    }
-});
+    document.getElementById("openmenu").addEventListener("click", toggleMenu); // Open menu by clicking the button for mobile players
+    document.addEventListener("keydown", (e) => { // Open menu by pressing esc
+        if (e.keyCode == 27) {
+            toggleMenu();
+        }
+    });
 
-function toggleMenu() {
-    $("#MenuHaha").fadeToggle(150);
-    $("#MenuHaha2").fadeToggle(150);
-    $("#MenuHaha3").fadeToggle(150);
-    $("#MenuHaha4").fadeToggle(150);
-}
+    function toggleMenu() {
+        $("#MenuHaha").fadeToggle(150);
+        $("#MenuHaha2").fadeToggle(150);
+        $("#MenuHaha3").fadeToggle(150);
+        $("#MenuHaha4").fadeToggle(150);
+    }
 
     // Appear Notification
     let notifications = [];
@@ -975,7 +1048,7 @@ function toggleMenu() {
     function updateTargetHud(name, health, distance, enemyangle, nowstatus, display) {
         document.getElementById("name").textContent = name;
         document.getElementById("health").value = health;
-        document.getElementById("distance").textContent = "distance: " + distance;
+        document.getElementById("distance").value = distance;
         document.getElementById("aimangle").textContent = "Enemy Aim Angle: " + enemyangle;
         document.getElementById("nowstatus").textContent = "Status: " + nowstatus;
         document.getElementById("targethud").style.opacity = display
@@ -1149,8 +1222,21 @@ function toggleMenu() {
         send([7, ...encodeText])
     }
 
+    function stopMove() {
+        send(new Uint8Array([6, 0]));
+    }
+
+    function move(angle) {
+        angle = (65535 * (angle + Math.PI)) / (2 * Math.PI);
+        send(new Uint8Array([1, 255 & angle, (angle >> 8) & 255]));
+    }
+
+    function calcAngle(a, b) {
+        if (a && b) return Math.atan2(a.y - b.y, a.x - b.x);
+    }
+
     function getEl(id) {
-        document.getElementById(id)
+        return document.getElementById(id)
     }
 
     class Client {
@@ -1162,6 +1248,8 @@ function toggleMenu() {
             this.dir = 0;
             this.oldX = 0;
             this.oldY = 0;
+            this.xPos = 0;
+            this.yPos = 0;
             this.clan = [];
             this.currentHat = null;
             this.inTrap = false;
@@ -1182,6 +1270,7 @@ function toggleMenu() {
             this.shotSync = true;
             this.antitrap = false;
             this.aimbot = true;
+            this.autopushing = 0;
         }
         ally(a) {
             let b = a.typeof === "number" ? a : a.sid;
@@ -1239,6 +1328,7 @@ function toggleMenu() {
             }*/
 
             if (d && document.getElementById("autobreak").checked) { // Auto Break
+                let nearInTrap = objects.find(a => a && this.mine(a) && utils.getDist(a, enemies) < 60 && a.type == 6);
                 console.log("test");
                 this.aimbot = false;
                 let breakreloaded = true;
@@ -1260,6 +1350,9 @@ function toggleMenu() {
                         select(A_B_W ? 1 : 0);
                         hit(spikeAim);
                         breakreloaded = false;
+                        setTimeout(() => {
+                            place(7, spikeAim)
+                        }, 200)
                         setTimeout(() => {breakreloaded = true}, 700)
                         if (T_A_B) {
                             notquad()
@@ -1271,8 +1364,9 @@ function toggleMenu() {
                         hit(z);
                         if (T_A_B) {
                             setTimeout(() => {
-                                place(7, z)
-                            }, 1000 / 9)
+                                place(nearInTrap ? 4 : 7, z)
+                                drawingOptions.Circle(ctx, z, "#752121", 40, 0.1, true);
+                            }, 200)
                         }
                         breakreloaded = false;
                         setTimeout(() => {breakreloaded = true}, 700)
@@ -1313,18 +1407,30 @@ function toggleMenu() {
                     notif("warning", "Anti sync case", "Anti sync has been blocked by lovey mod", 2000)
                 }
             }
-
-            if (enemies.health <= 49 && neardist <= 1000 && document.getElementById("Msync").checked) { // Musket sync (Coffee mod gave me the idea)
-                if (this.shotSync) {
-                    select(1)
-                    hit(nearangle)
-                    select(0)
-                    this.shotSync = false;
-                    setTimeout(() => {this.shotSync = true}, 1500)
+            if (D_M_S) {
+                if (enemies.health <= 49 && neardist <= 1000 && document.getElementById("Msync").checked) { // Musket sync (Coffee mod gave me the idea)
+                    if (this.shotSync) {
+                        select(1)
+                        hit(nearangle)
+                        select(0)
+                        this.shotSync = false;
+                        setTimeout(() => {this.shotSync = true}, 1500)
+                    }
+                }
+            }
+            else if (!D_M_S) {
+                if (enemies.health <= 70 && neardist <= 1000 && document.getElementById("Msync").checked) { // Musket sync (Coffee mod gave me the idea)
+                    if (this.shotSync) {
+                        select(1)
+                        hit(nearangle)
+                        select(0)
+                        this.shotSync = false;
+                        setTimeout(() => {this.shotSync = true}, 1500)
+                    }
                 }
             }
 
-            if(neardist <= 166 && document.getElementById("AutoPlacer").checked && !this.breaking) { // Autoplacer
+            if(neardist / 2 <= 50 && document.getElementById("AutoPlacer").checked && !this.breaking) { // Autoplacer
                 let nearInTrap = objects.find(a => a && this.mine(a) && utils.getDist(a, enemies) < 60 && a.type == 6);
                 if (nearInTrap) {
                     for (let i = 0; i <= 2; i++) {
@@ -1347,8 +1453,8 @@ function toggleMenu() {
                 }, 400);
             }
 
-            if (neardist <= 300) updateTargetHud(enemies.name, enemies.health, neardist.toFixed(0), nearangle.toFixed(3), this.health > enemies.health ? "You winning" : this.health == enemies.health ? "It's a tie" : "You Losing", "0.7")
-            else if (neardist >= 300) updateTargetHud(enemies.name, enemies.health, neardist.toFixed(0), nearangle.toFixed(3), this.health > enemies.health ? "You winning" : this.health == enemies.health ? "It's a tie" : "You Losing", "0")
+            if (neardist <= 300 && this.alive) updateTargetHud(enemies.name, enemies.health, neardist.toFixed(0), nearangle.toFixed(3), this.health > enemies.health ? "You winning" : this.health == enemies.health ? "It's a tie" : "You Losing", "0.7")
+            else if (neardist >= 300 && this.alive) updateTargetHud(enemies.name, enemies.health, neardist.toFixed(0), nearangle.toFixed(3), this.health > enemies.health ? "You winning" : this.health == enemies.health ? "It's a tie" : "You Losing", "0")
 
 
 
@@ -1362,7 +1468,7 @@ function toggleMenu() {
                 document.getElementById("modmenu").style.display = "none";
             } else if (!document.getElementById("legitmode").checked) {
                 ["autoclicker", "legitautoheal", "placeassist"].forEach(mahmodz => document.getElementById(mahmodz).checked = false)
-                document.getElementById("modmenu").style.display = "block";
+                if (!H_A_L) document.getElementById("modmenu").style.display = "block";
 
             }
 
@@ -1409,27 +1515,33 @@ function toggleMenu() {
                 this.alive = false;
                 this.dieCount++;
                 this.kills = 0;
+                document.getElementById("targethud").style.opacity = 0;
                 this.age = 0;
+                ShowDamage(100)
             }
             if (parsedMessage.type == packets.update_age) {
                 const a = Math.max(0, parsedMessage[1] | parsedMessage[2] << 8 | parsedMessage[3] << 16 | parsedMessage[4] << 24);
                 this.age = ~~(Math.log(1 + a) ** 2.4 / 13);
             }
 
+            if (parsedMessage.type == packets.spawned) {
+                this.alive = true;
+            }
+
             if (parsedMessage.type == packets.killed) {
                 updateTargetHud(enemies.name, enemies.health, neardist.toFixed(0), nearangle.toFixed(3), this.health >= enemies.health ? "You winning" : "You Losing", "0")
                 this.kills++
+                if (!H_K_E) showBorder(6)
                 if (document.getElementById("killChat").checked) {
-                    sendChat(this.kills + " Dumbasses down");
-                    setTimeout(() => {
-                        sendChat("I am super pro")
-                    }, 900); // credits me mega noob wow!
+                    let killChat = ["Your English bad - Cku", "Learn how to make Anticheat Cku.", "Cku Quitted Abt ingame staff jokes.", "I'm better than Cku At Coding.", "Uh I use POST On Fetch - Cku", "Your Antiban is fake - Cku", "I have ur script - HitMan", "Noone skid ur trash script - Hitman", "Learn how to code JavaScript, Cku.", "HitMan dies to 200ms player 💀", "Go play doors w ilyax - HitMan", "Atilla was a reckless's dog", "Cku anticheat bypassed by crygen", "Ckumascot more like Travis scott", "nightmare dodged abt ban hackers", "nightmare get a life", "Nightmare dies to basic ahk", "Nightmare have a bad heart", "Nightmare Obeys LapaMavue", "Hackers > Developers at coding."]
+                    sendChat(killChat[Math.floor(Math.random() * killChat.length)]);
                 }
 
             }
 
             if (parsedMessage.type === packets.update) {
-                if (this.health < 100 && statusMode.ping <= 80 && document.getElementById("Autoheal").checked) place(2, getAttackDir()) // Normal autoheal (Perfect)
+                ShowDamage(this.health)
+                if (this.health < 100 && statusMode.ping <= 80 && A_H_HP !== "Spam" && document.getElementById("Autoheal").checked) place(2, getAttackDir()) // Normal autoheal (Perfect)
                 enemies = null;
                 for (let a = 1; a < parsedMessage.length; a += 19) {
                     const b = parsedMessage[a + 8];
@@ -1438,7 +1550,7 @@ function toggleMenu() {
                     const f = parsedMessage[a + 2] | parsedMessage[a + 3] << 8;
                     const g = parsedMessage[a + 4] | parsedMessage[a + 5] << 8;
                     const h = parsedMessage[a + 6] | parsedMessage[a + 7] << 8;
-                    const i = parsedMessage[a + 9] / 255 * 6.283185307179586 - Math.PI;
+                    var i = parsedMessage[a + 9] / 255 * 6.283185307179586 - Math.PI;
                     const j = parsedMessage[a + 10];
                     const k = parsedMessage[a + 11];
                     const l = parsedMessage[a + 12];
@@ -1473,6 +1585,8 @@ function toggleMenu() {
                             team: l,
                             dir: i
                         };
+                        this.xPos = b.x;
+                        this.yPos = b.y;
                         Object.assign(a, b);
                         objects[f] = a;
                         if (f === mainPlayer.id) {
@@ -1501,27 +1615,31 @@ function toggleMenu() {
             }
         }
     }
+    // High ping autoheal
+    setInterval(() => {
+        if (document.getElementById("Autoheal").checked) {
+            if (A_H_HP == "High Ping" && statusMode.ping >= 81) place(2, getAttackDir())
+            else if (A_H_HP == "Spam") place(2, getAttackDir())
+            else return;
+        }
+    }, 200)
 
-    function highpingHeal() {
-        if (statusMode.ping >= 80 && document.getElementById("Autoheal").checked) place(2, getAttackDir()) // High ping autoheal
-    }
-    setInterval(highpingHeal, 200) // Set high ping autoheal to work
-
-    function resetPacket() {
-        statusMode.pps = 0
+    setInterval(() => {
+        statusMode.pps = 0;
         document.getElementById("showPps").innerHTML = "PPS: " + statusMode.pps;
-    }
-
-    setInterval(resetPacket, 1000)
+    }, 1000)
 
     var mainPlayer = new Client();
 
     var send = (function (message) {
         try {
             if (websocket && websocket.readyState === WebSocket.OPEN) {
-                if(statusMode.pps >= 600) return
-                websocket.send(new Uint8Array(message));
-                document.getElementById("showPps").innerHTML = "PPS: " + statusMode.pps++;
+                if(statusMode.pps >= 500) return
+                else {
+                    websocket.send(new Uint8Array(message));
+                    statusMode.pps++
+                    document.getElementById("showPps").innerHTML = "PPS: " + statusMode.pps;
+                }
             } else {
             }
         } catch (error) {
@@ -1573,40 +1691,42 @@ function toggleMenu() {
     }
 
     function place(a, b){
-        setTimeout(() => {
-            var tmpS = (60 + a.scale - 8);
-            var tmpX = this.x + (tmpS * Math.cos(b));
-            var tmpY = this.y + (tmpS * Math.sin(b));
-            if(utils.checkItemLocation(tmpX, tmpY, a.scale, 0.4, a.id, false, this)){
-                if (document.getElementById("legitmode").checked && document.getElementById("placeassist").checked) {
-                    select(a);
-                    setTimeout(() => {
-                        hit(b);
-                        select(mainWeapon);
-                    }, Math.round(Math.random() * (120 - 50)) + 50)
-                } else if (!document.getElementById("legitmode").checked) {
-                    select(a);
-                    hit(b);
-                    if (this.breaking) select(A_B_W ? 1 : 0)
-                    else select(mainWeapon);
-
-                }
-                document.getElementById("showCps").innerHTML = "CPS: " + statusMode.cps++;
+        var tmpS = (60 + a.scale - 8);
+        var tmpX = this.x + (tmpS * Math.cos(b));
+        var tmpY = this.y + (tmpS * Math.sin(b));
+        if(utils.checkItemLocation(tmpX, tmpY, a.scale, 0.4, a.id, false, this)){
+            if (document.getElementById("legitmode").checked && document.getElementById("placeassist").checked) {
+                select(a);
                 setTimeout(() => {
-                    document.getElementById("showCps").innerHTML = "CPS: " + statusMode.cps--;
-                }, 1e3)
-            } else {
-                select(mainWeapon);
+                    hit(b);
+                    select(mainWeapon);
+                }, Math.round(Math.random() * (120 - 50)) + 50)
+            } else if (!document.getElementById("legitmode").checked) {
+                select(a);
+                hit(b);
+                if (this.breaking) select(A_B_W ? 1 : 0)
+                else select(mainWeapon);
+
             }
-        }, 1)
+            document.getElementById("showCps").innerHTML = "CPS: " + statusMode.cps++;
+            setTimeout(() => {
+                document.getElementById("showCps").innerHTML = "CPS: " + statusMode.cps--;
+            }, 1e3)
+        } else {
+            select(mainWeapon);
+        }
     }
 
-    // AUTO BREAK CONFIGURATION
+    // CONFIG
     let A_B_T = true;
     let A_B_S = true;
     let T_A_B = true;
     let A_B_W = true;
-
+    let A_H_HP = "High Ping";
+    let H_A_L = true;
+    let H_K_E = true;
+    let D_M_S = false;
+    let H_D_E = false;
     // COMMANDS
     window.addEventListener("keydown", function(e) {
         if(e.code == "Enter" && window.chat && window.chat.value != '') {
@@ -1646,6 +1766,54 @@ function toggleMenu() {
                     sendChat("Primary Weapon for autobreak")
                 }
             }
+            if (window.chat.value == ".l AHHP") {
+                if (A_H_HP == "High Ping") {
+                    A_H_HP = "Spam";
+                    sendChat("Autoheal Set to Spam.");
+                    return;
+                } else if (A_H_HP == "Spam") {
+                    A_H_HP = "High Ping";
+                    sendChat("Autoheal Set to High-Ping");
+                }
+            }
+            if (window.chat.value == ".l HAL") {
+                if (!H_A_L) {
+                    H_A_L =! H_A_L
+                    sendChat("Hiding Array list")
+                    document.getElementById("modmenu").style.display = "none";
+                } else {
+                    H_A_L =! H_A_L
+                    sendChat("Showing Array List")
+                    document.getElementById("modmenu").style.display = "block";
+                }
+            }
+            if (window.chat.value == ".l HKE") {
+                if (!H_K_E) {
+                    H_K_E =! H_K_E
+                    sendChat("Hiding Kill Effect")
+                } else {
+                    H_K_E =! H_K_E
+                    sendChat("Showing Kill Effect")
+                }
+            }
+            if (window.chat.value == ".l DMS") {
+                if (!D_M_S) {
+                    D_M_S =! D_M_S
+                    sendChat("Using Dobule Musket Shoots.")
+                } else {
+                    D_M_S =! D_M_S
+                    sendChat("Using Single Musket Shoots.")
+                }
+            }
+            if (window.chat.value == ".l HDE") {
+                if (!H_D_E) {
+                    H_D_E =! H_D_E
+                    sendChat("Hiding Damage Effect")
+                } else {
+                    H_D_E =! H_D_E
+                    sendChat("Showing Damage Effect")
+                }
+            }
         }
     })
 
@@ -1657,12 +1825,12 @@ function toggleMenu() {
         }
     } */
 
-    var repeater = function (key, action, interval) {
+    var repeater = function (key, action) {
         let _isKeyDown = false;
         let _intervalId = undefined;
         return {
             start(code) {
-                if (code == key && document.activeElement.id.toLowerCase() !== 'chatbox') {
+                if (code === key && document.activeElement.id.toLowerCase() !== 'chatbox') {
                     _isKeyDown = true;
                     if (_intervalId === undefined) {
                         _intervalId = setInterval(() => {
@@ -1671,12 +1839,12 @@ function toggleMenu() {
                                 clearInterval(_intervalId);
                                 _intervalId = undefined;
                             }
-                        }, interval);
+                        }, statusMode.pps > 100 ? 100 : 1000 / keyBinds.cps);
                     }
                 }
             },
             stop(code) {
-                if (code == key && document.activeElement.id.toLowerCase() !== 'chatbox') {
+                if (code === key && document.activeElement.id.toLowerCase() !== 'chatbox') {
                     _isKeyDown = false;
                 }
             }
@@ -1684,14 +1852,11 @@ function toggleMenu() {
     };
 
     // Macros
-    const boostPlacer = repeater(keyBinds.trap, () => {
-        place(7, getAttackDir())
-    }, 1000 / keyBinds.cps);
-    const spikePlacer = repeater(keyBinds.spike, () => {place(4, getAttackDir())}, 1000 / keyBinds.cps);
-    const millPlacer = repeater(keyBinds.windwill, () => {place(5, getAttackDir())}, 1000 / keyBinds.cps);
-    const healer = repeater(keyBinds.heal, () => {place(2, getAttackDir())}, 80);
-    const platformPlacer = repeater(keyBinds.platform, () => {place(8, getAttackDir())}, 80);
-
+    const boostPlacer = repeater(keyBinds.trap, () => place(7, getAttackDir()));
+    const spikePlacer = repeater(keyBinds.spike, () => place(4, getAttackDir()));
+    const millPlacer = repeater(keyBinds.windwill, () => place(5, getAttackDir()));
+    const healer = repeater(keyBinds.heal, () => place(2, getAttackDir()));
+    const platformPlacer = repeater(keyBinds.platform, () => place(8, getAttackDir()));
     var messageInterval = false;
 
     document.addEventListener("keydown", e => { // Macros work
@@ -1917,6 +2082,34 @@ function toggleMenu() {
         }, 5000);
     }
 
+
+    // PINK BORDER
+    const pinkborder = document.createElement("div");
+    pinkborder.innerHTML = `<div id="pinkyborder" style="transition: 0.5s; display: block; opacity: 0; position: absolute;z-index: 2;width: 100%;height: 100%;background: radial-gradient(transparent 40%, #e2a5d6);pointer-events: none; z-index: 3;"></div>`;
+    document.body.appendChild(pinkborder);
+    function showBorder(second) {
+        if (H_K_E) return
+        document.getElementById("pinkyborder").style.opacity = 1;
+        setTimeout(() => { document.getElementById("pinkyborder").style.opacity = 0; }, second * 1000)
+    }
+
+    // HEALTH BORDER
+    const healthborder = document.createElement("div");
+    healthborder.innerHTML = `
+  <div id="damagecolor" style="transition: background 0.3s ease; display: block; position: absolute; z-index: 2; width: 100%; height: 100%; background: radial-gradient(transparent 100%, red); pointer-events: none; z-index: 3;"></div>
+`;
+    document.body.appendChild(healthborder);
+
+    function ShowDamage(value) {
+        if (H_D_E) return
+        const damageColor = document.getElementById("damagecolor");
+        damageColor.style.background = `radial-gradient(transparent ${value}%, red)`;
+    }
+
+
+
+
+
     // Create stars at intervals
     setInterval(function () {
 
@@ -1943,8 +2136,6 @@ function toggleMenu() {
         document.getElementById("showCps").style.color = document.getElementById("nightmode").checked ? "#94edf9" : "white";
 
 
-        const canvas = document.getElementById("game-canvas");
-        const ctx = canvas.getContext("2d");
         ctx.fillStyle = document.getElementById("nightmode").checked ? "black" : "#788f57";
 
 
@@ -1965,6 +2156,13 @@ function toggleMenu() {
         notif("info", "Hello", "Welcome to Lovey Mod", 2000)
     }, 5000);
 
+    const CkuAntiCheat = {
+        local: undefined
+    };
+    const canvas = CkuAntiCheat;
+    window.addEventListener("DOMContentLoaded", e => {
+        canvas.local = document.getElementById("game-canvas").getContext("2d");
+    });
 
     // Script from my own legit mod
 
@@ -2418,4 +2616,5 @@ transform: scale(1.2);
 
     document.querySelector("#pop-settings > div.pop-settings-content > div:nth-child(1) > div.control-group > label > div").click()
     document.querySelector("#pop-settings > div.pop-settings-content > div:nth-child(5) > div.control-group > label > div").click()
+
 }, 300);
