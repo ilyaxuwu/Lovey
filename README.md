@@ -44,6 +44,7 @@ Features:
 - Kill Effect: Shows the kill effect when you have eliminated somneone
 - TargetHUD: Searchs near enemy to show infos about it.
 - Array-List: Lists Info's about your player and the script.
+- Winter Theme: It should turn to winter when we are in winter season
 - This script is also Auto updates so you dont need to redownload over over and over again
 
 Commands:
