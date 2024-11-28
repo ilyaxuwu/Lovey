@@ -28,6 +28,10 @@
 /*
 Changelogs:
 
+v0.3.1 (Still v0.3):
+- Added winter mode for winter day
+- Targethud Bug-fixes
+
 v0.3:
 - Autoheal will heal by using a different method
 - AntiTrap will place traps everytime
@@ -1294,7 +1298,7 @@ transform: translate(-50%, -50%);
         update() {
             const d = objects.find(a => a && utils.getDist(a, this) < 60 && a.type == 6 && !this.mine(a));
             const f = this.breaking;
-            var neardist = enemies ? utils.getDist(enemies, this) : 0;
+            var neardist = enemies ? utils.getDist(enemies, this) - 70 : 0;
             var nearangle = enemies ? utils.getDirect(enemies, this, 0, 0) : 0;
             let inTrapSpike = objects.find(a => a && [2, 7, 17].includes(a.type) && !this.mine(a) && utils.getDist(a, this) < 100);
             let antitrapangle = 0;
@@ -2002,85 +2006,108 @@ transform: translate(-50%, -50%);
     night.innerHTML = `<div id="nightEl" style="transition: 0.3s; display: block; opacity: 0; position: absolute;z-index: 2;width: 100%;height: 100%;background: rgba(0, 0, 44, 0.7);pointer-events: none;"></div>`;
     moon.innerHTML = `<img id="moonEl" src="https://cdn.glitch.global/ca081162-612b-4311-8a7d-7828f21c13e0/%E2%80%94Pngtree%E2%80%94white%20moon%20in%20the%20night_5054146.png?v=1725300100810" width="300" height="300" style="pointer-events: none;z-index: 5; position: absolute; top: 1%; left: 43.5%; opacity: 0;">`;
 
-
-
     document.body.appendChild(night);
     document.body.appendChild(moon);
 
-    const style = document.createElement('style'); // Draw a star if Night mode is enabled
+    let snows = ["❅", "❆", "❃", "❇", "❈", "❉", "❊", "❋"];
+
+    const style = document.createElement('style');
     style.innerHTML = `
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #111;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    .star {
+        position: absolute;
+        z-index: 3;
+        top: -20px;
+        color: #75b1d4; /* COLOR OF IT */
+        animation: animate 5s linear forwards;
+        opacity: 0;
+    }
+
+    .winter {
+        position: absolute;
+        z-index: 3;
+        top: -20px;
+        color: white; /* COLOR OF IT */
+        animation: animate 5s linear forwards;
+        opacity: 0;
+    }
+
+    .winter::before {
+        content: var(--snow-icon);
+        font-family: sans-serif; /* Sadece Unicode karakterler kullandığınız için FontAwesome gerekmez */
+        text-shadow: 0 0 20px #3a9bd2, 0 0 80px #3a9bd2;
+    }
+
+    .star::before {
+        content: "⭐";
+        font-family: FontAwesome;
+        text-shadow: 0 0 20px #3a9bd2, 0 0 80px #3a9bd2, 0 0 100px #3a9bd2;
+    }
+
+    @keyframes animate {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
         }
 
-        body {
-            background: #111;
-            min-height: 100vh;
-            overflow: hidden;
+        80% {
+            opacity: 1;
         }
 
-        .star {
-            position: absolute;
-            z-index: 3;
-            top: -20px;
-            color: #75b1d4;
-            animation: animate 5s linear forwards;
+        100% {
+            transform: translateY(100vh) rotate(360deg);
             opacity: 0;
         }
+    }
 
-        .star::before {
-            content: "\\f005";
-            font-family: FontAwesome;
-            text-shadow: 0 0 20px #3a9bd2, 0 0 80px #3a9bd2, 0 0 100px #3a9bd2;
+    @media screen and (max-width: 600px) {
+        .star {
+            font-size: 8px;
         }
-
-        @keyframes animate {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
-            }
-
-            80% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
+        .winter {
+            font-size: 8px;
         }
+    }
+`;
 
-        @media screen and (max-width: 600px) {
-            .star {
-                font-size: 8px;
-            }
-        }
-    `;
     document.head.appendChild(style);
-
-    const faLink = document.createElement('link');
-    faLink.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css";
-    faLink.rel = "stylesheet";
-    faLink.crossOrigin = "anonymous";
-    document.head.appendChild(faLink);
 
     function stars() {
         let e = document.createElement("div");
-        e.setAttribute("class", "star");
+        e.setAttribute("class", "winter"); // should be star in ends of winter
         document.body.appendChild(e);
         e.style.left = Math.random() * innerWidth + "px";
+
+        let randomSnow = snows[Math.floor(Math.random() * snows.length)];
+        e.style.setProperty('--snow-icon', `'${randomSnow}'`);
 
         let size = Math.random() * 12;
         let duration = Math.random() * 3;
 
-        e.style.fontSize = Math.floor(Math.random() * (50 - 25 + 1)) + 25 + "px";
+        e.style.fontSize = Math.floor(Math.random() * (60 - 25 + 1)) + 25 + "px";
         e.style.animationDuration = 2 + duration + "s";
+
         setTimeout(function () {
             document.body.removeChild(e);
         }, 5000);
     }
+
+    // Create Stars
+    setInterval(() => {
+        // if (!document.getElementById("nightmode").checked) return
+        stars();
+    }, 150)
 
 
     // PINK BORDER
@@ -2110,7 +2137,7 @@ transform: translate(-50%, -50%);
 
 
 
-    // Create stars at intervals
+    // Check everything
     setInterval(function () {
 
         // Array list
@@ -2148,9 +2175,6 @@ transform: translate(-50%, -50%);
             document.getElementById("moonEl").style.opacity = "0";
         }
 
-        if (document.getElementById("nightmode").checked) {
-            stars();
-        }
     }, 200);
     setTimeout(() => {
         notif("info", "Hello", "Welcome to Lovey Mod", 2000)
