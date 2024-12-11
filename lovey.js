@@ -104,7 +104,7 @@ For The Entrie script:
 v0.1:
 First lovey mod
 */
-
+alert("We're sorry to bother you, but this is very important! Since schools are important, Lovey-mod unfortunately will not receive updates, so use Lovey mod as much as you can, Enjoy. Unfortunately, after this script is patched, it will not be unpatched with the update.")
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 
