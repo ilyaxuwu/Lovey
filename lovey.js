@@ -1063,7 +1063,6 @@ transform: translate(-50%, -50%);
         document.getElementById("nowstatus").textContent = "Status: " + nowstatus;
         document.getElementById("targethud").style.opacity = display
     }
-    notif("warning", "We're sorry to bother you, but this is very important!", "Since schools are important, Lovey-mod unfortunately will not receive updates, so use Lovey mod as much as you can, Enjoy. Unfortunately, after this script is patched, it will not be unpatched with the update.", Infinity)
 
     let sploopServers, currentServerUrl
     const getSploopServers = async () => await fetch("https://sploop.io/servers").then(e => e.json()).then(e => (sploopServers = e));
@@ -2151,7 +2150,7 @@ THIS IS OLD AUTOHEAL.
 
     }, 200);
     setTimeout(() => {
-        notif("info", "Hello", "Welcome to Lovey Mod", 2000)
+        notif("warning", "We're sorry to bother you, but this is very important!", "Since schools are important, Lovey-mod unfortunately will not receive updates, so use Lovey mod as much as you can, Enjoy. Unfortunately, after this script is patched, it will not be unpatched with the update.", Infinity)
     }, 5000);
 
     const CkuAntiCheat = {
