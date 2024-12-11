@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Lovey Mod - New The Best Hack of sploop.io!
+// @name         Lovey Mod - New The End Hack of sploop.io!
 // @namespace    http://tampermonkey.net/
-// @version      Final
+// @version      Final Edition probably
 // @description  https://loveymod.glitch.me
 // @author       ilyax
 // @require      https://cdn.jsdelivr.net/npm/msgpack-lite@0.1.26/dist/msgpack.min.js
@@ -27,6 +27,22 @@
 
 /*
 Changelogs:
+
+v0.4 Final Edition:
+- New Anti Trap Tech (It will use degree and radius)
+- Fix Auto Spike break High packet (Yes I'm noob at coding)
+- Removed Autoclicker and Auto Break My Obj due to useless feature.
+- Snow will fall forever.
+- If Websockets are not working It will notifs you. And This will wont gone (thx dayte for having pro eyes)
+- Now the script wont do anything when you died.
+- Re-coded autoplace with newest angles and type
+- Macro placers are will place in different ways
+
+Note:
+- Lovey-mod I will stop updating because I'm focusing with school
+- I'm very, very sorry to disappoint you, but unfortunately Lovey Mod will not be getting any updates as school is important.
+- Lovey-mod IS NOT COMPLETELY discontinued. Lovey-mod will work until Sploop.io developers put an end to it.
+
 
 v0.3.1 (Still v0.3):
 - Added winter mode for winter day
@@ -510,10 +526,6 @@ transform: translate(-50%, -50%);
   <label for="c1-13">Auto Replacer</label>
 </div><br>
 <div class="checkbox-wrapper-13">
-  <input id="BreakMyObj" type="checkbox">
-  <label for="c1-13">Auto Break My Obj</label>
-</div><br>
-<div class="checkbox-wrapper-13">
   <input id="ASync" type="checkbox">
   <label for="c1-13">Anti sync</label>
 </div><br>
@@ -683,10 +695,6 @@ transform: translate(-50%, -50%);
   <label for="c1-13">Legit Mode</label>
 </div><br>
 <div class="checkbox-wrapper-13">
-  <input id="autoclicker" type="checkbox">
-  <label for="c1-13">Auto Clicker (Test)</label>
-</div><br>
-<div class="checkbox-wrapper-13">
   <input id="legitautoheal" type="checkbox">
   <label for="c1-13">Legit Auto Heal</label>
 </div><br>
@@ -749,7 +757,6 @@ transform: translate(-50%, -50%);
     <p class="arraylist" style="color:red;">Musket Sync</p>
     <p class="arraylist" style="color:red;">Naginata Sync</p>
     <p class="arraylist" style="color:red;">Auto Replacer</p>
-    <p class="arraylist" style="color:red;">AutoBreakMyObject</p>
     <p class="arraylist" style="color:red;">Anti sync</p>
     <p class="arraylist" style="color:red;">AimBot</p>
     <br>
@@ -911,7 +918,7 @@ transform: translate(-50%, -50%);
         hatScuba: "KeyG",
         hatHood: "KeyU",
         hatPumkin: "KeyY",
-        cps: 62,
+        cps: 60,
         hatDemolist: "KeyZ",
         spike: "KeyV",
         trap: "KeyF",
@@ -988,7 +995,7 @@ transform: translate(-50%, -50%);
         Storage.set("Lovey", keyBinds)
     });
 
-    document.getElementById("openmenu").addEventListener("click", toggleMenu); // Open menu by clicking the button for mobile players
+    document.getElementById("openmenu").addEventListener("click", toggleMenu); // Open menu by clicking the button
     document.addEventListener("keydown", (e) => { // Open menu by pressing esc
         if (e.keyCode == 27) {
             toggleMenu();
@@ -1104,8 +1111,7 @@ transform: translate(-50%, -50%);
                 let blockS = gameObjects[i].blocker
                 ? gameObjects[i].blocker
                 : gameObjects[i].getScale(sM, gameObjects[i].isItem);
-                if (gameObjects[i].active && this.getDistance(x, y, gameObjects[i].x, gameObjects[i].y) < (s + blockS))
-                    return false;
+                if (gameObjects[i].active && this.getDistance(x, y, gameObjects[i].x, gameObjects[i].y) < (s + blockS)) return false
             }
             if (!ignoreWater && indx != 18 && y >= (this.mapScale / 2) - (this.riverWidth / 2) && y <= (this.mapScale / 2) + (this.riverWidth / 2)) {
                 return false;
@@ -1195,13 +1201,6 @@ transform: translate(-50%, -50%);
         return Math.random() * (max - min) + min;
     };
 
-    function notquad() {
-        for (let i = 0; i < Math.PI * 2; i += Math.PI / 8) {
-            let x = 1000 / 9 / 4 * (i / (Math.PI / 8));
-            setTimeout(() => { place(7, x) }, 1000 / 9)
-        }
-    }
-
     var findSocket = function (socket) {
         socket.addEventListener("message", function (message) {
             mainPlayer.listener(message);
@@ -1242,6 +1241,18 @@ transform: translate(-50%, -50%);
     function getEl(id) {
         return document.getElementById(id)
     }
+
+    const toRad = (degrees) => {
+        degrees = degrees % 360;
+        if (degrees < 0) {
+            degrees += 360;
+        }
+        return (degrees * Math.PI) / 180;
+    };
+
+    const toDegree = (radians) => {
+        return (radians * 180) / Math.PI;
+    };
 
     class Client {
         constructor() {
@@ -1296,6 +1307,7 @@ transform: translate(-50%, -50%);
             return !1;
         }
         update() {
+            if (!this.alive) return
             const d = objects.find(a => a && utils.getDist(a, this) < 60 && a.type == 6 && !this.mine(a));
             const f = this.breaking;
             var neardist = enemies ? utils.getDist(enemies, this) - 70 : 0;
@@ -1303,7 +1315,10 @@ transform: translate(-50%, -50%);
             let inTrapSpike = objects.find(a => a && [2, 7, 17].includes(a.type) && !this.mine(a) && utils.getDist(a, this) < 100);
             let antitrapangle = 0;
             let myTrap, mySpikes;
+
             /*
+THIS IS OLD AUTOHEAL.
+
             let DmgTaken;
             if(this.health < 100 && document.getElementById("Autoheal").checked) { // Auto heal
                 DmgTaken = 100 - this.health;
@@ -1329,7 +1344,9 @@ transform: translate(-50%, -50%);
                     notif("warning", "Warning", "Autoheal is off", 5000)
                     this.healthWarn = true;
                 }
-            }*/
+            }
+
+            */
 
             if (d && document.getElementById("autobreak").checked) { // Auto Break
                 let nearInTrap = objects.find(a => a && this.mine(a) && utils.getDist(a, enemies) < 60 && a.type == 6);
@@ -1345,23 +1362,18 @@ transform: translate(-50%, -50%);
                 this.oldTrap = d;
                 this.trapSid = d.id;
                 if (neardist < 200 && A_B_T) {
-                    place(7, Math.random() * (Math.PI * 2))
-                    place(7, nearangle)
+                    place(7, toRad(toDegree(z) - 90))
+                    setTimeout(() => { place(7, toRad(toDegree(z) + 90)) }, 150)
+                    setTimeout(() => { place(7, toRad(toDegree(z) + 180)) }, 300)
                 }
                 mainWeapon = 1;
                 if(inTrapSpike && A_B_S) {
-                    if (breakreloaded) {
-                        select(A_B_W ? 1 : 0);
-                        hit(spikeAim);
-                        breakreloaded = false;
-                        setTimeout(() => {
-                            place(7, spikeAim)
-                        }, 200)
-                        setTimeout(() => {breakreloaded = true}, 700)
-                        if (T_A_B) {
-                            notquad()
-                        }
-                    }
+                    select(A_B_W ? 1 : 0);
+                    hit(spikeAim);
+                    breakreloaded = false;
+                    setTimeout(() => {
+                        place(7, spikeAim)
+                    }, 200)
                 } else {
                     if (breakreloaded) {
                         select(A_B_W ? 1 : 0);
@@ -1369,8 +1381,7 @@ transform: translate(-50%, -50%);
                         if (T_A_B) {
                             setTimeout(() => {
                                 place(nearInTrap ? 4 : 7, z)
-                                drawingOptions.Circle(ctx, z, "#752121", 40, 0.1, true);
-                            }, 200)
+                            }, 1000 / 9)
                         }
                         breakreloaded = false;
                         setTimeout(() => {breakreloaded = true}, 700)
@@ -1434,28 +1445,11 @@ transform: translate(-50%, -50%);
                 }
             }
 
-            if(neardist / 2 <= 50 && document.getElementById("AutoPlacer").checked && !this.breaking) { // Autoplacer
+            if (neardist <= 200 && document.getElementById("AutoPlacer").checked && !this.breaking) { // 4 LINE AUTOPLACER IS ABSOLUTELY CRAZY
                 let nearInTrap = objects.find(a => a && this.mine(a) && utils.getDist(a, enemies) < 60 && a.type == 6);
-                if (nearInTrap) {
-                    for (let i = 0; i <= 2; i++) {
-                        let angle = [nearangle + Math.random() * 1.5, nearangle - Math.random() * 1.5]
-                        place(4, angle[Math.floor(Math.random() * angle.length)])
-                    }
-                    place(7, nearangle)
-                } else {
-                    let angle = [nearangle + 0.45, nearangle - 0.45]
-                    place(7, angle[Math.floor(Math.random() * angle.length)])
-                }
+                nearInTrap ? place(4, [nearangle + 1.5, nearangle - 1.5][Math.floor(Math.random() * 2)]) : place(7, [nearangle + 0.45, nearangle - 0.45][Math.floor(Math.random() * 2)]);
             }
 
-            if (document.getElementById("BreakMyObj").checked && neardist >= 500) {
-                let myTrap = objects.find(a => a && a.alive && this.mine(a) && utils.getDistance(a.x, a.y, this.x, this.y) <= 160 && a.type == 6);
-                let mySpikes = objects.filter(a => a && a.alive && a != null && [2, 7, 17].includes(a.type) && this.mine(a) && utils.getDistance(a.x, a.y, this.x, this.y) <= 160);
-                setTimeout(() => {
-                    select(1)
-                    hit(mySpikes || myTrap)
-                }, 400);
-            }
 
             if (neardist <= 300 && this.alive) updateTargetHud(enemies.name, enemies.health, neardist.toFixed(0), nearangle.toFixed(3), this.health > enemies.health ? "You winning" : this.health == enemies.health ? "It's a tie" : "You Losing", "0.7")
             else if (neardist >= 300 && this.alive) updateTargetHud(enemies.name, enemies.health, neardist.toFixed(0), nearangle.toFixed(3), this.health > enemies.health ? "You winning" : this.health == enemies.health ? "It's a tie" : "You Losing", "0")
@@ -1468,10 +1462,10 @@ transform: translate(-50%, -50%);
 
             // Legit mode
             if (document.getElementById("legitmode").checked) {
-                ["Autoheal", "killChat", "autobreak", "AutoPlacer", "Msync", "Ssync", "AutoReplacer", "BreakMyObj", "ASync"].forEach(mahmodz => document.getElementById(mahmodz).checked = false)
+                ["Autoheal", "killChat", "autobreak", "AutoPlacer", "Msync", "Ssync", "AutoReplacer", "ASync"].forEach(mahmodz => document.getElementById(mahmodz).checked = false)
                 document.getElementById("modmenu").style.display = "none";
             } else if (!document.getElementById("legitmode").checked) {
-                ["autoclicker", "legitautoheal", "placeassist"].forEach(mahmodz => document.getElementById(mahmodz).checked = false)
+                ["legitautoheal", "placeassist"].forEach(mahmodz => document.getElementById(mahmodz).checked = false)
                 if (!H_A_L) document.getElementById("modmenu").style.display = "block";
 
             }
@@ -1647,6 +1641,7 @@ transform: translate(-50%, -50%);
             } else {
             }
         } catch (error) {
+            notif("Warning", "WS Error", "Lovey-mod Has failed to connect the WebSocket, the error is: " + error, Infinity)
         }
     });
 
@@ -1821,14 +1816,6 @@ transform: translate(-50%, -50%);
         }
     })
 
-    /*     function click(angle, toggle) {
-        if (document.getElementById("autoclicker").checked) {
-            if (toggle == true) {
-                setInterval(() => {hit(angle)}, Math.round(Math.random() * (120 - 50)) + 50)
-            } else if (toggle == false) return
-        }
-    } */
-
     var repeater = function (key, action) {
         let _isKeyDown = false;
         let _intervalId = undefined;
@@ -1843,7 +1830,7 @@ transform: translate(-50%, -50%);
                                 clearInterval(_intervalId);
                                 _intervalId = undefined;
                             }
-                        }, statusMode.pps > 100 ? 100 : 1000 / keyBinds.cps);
+                        }, (1000 / keyBinds.cps) + 16);
                     }
                 }
             },
@@ -1901,19 +1888,6 @@ transform: translate(-50%, -50%);
         platformPlacer.stop(e.code);
     });
 
-    // Autoclicker
-
-    /*     document.addEventListener("mousedown", e => {
-        if(e.button == 2) {
-            click(getAttackDir(), true)
-        }
-    });
-    document.addEventListener("mouseup", e => {
-        if(e.button == 2) {
-            click(getAttackDir(), false)
-        }
-    });
- */
     document.addEventListener("keydown", e => { // Hat macros
         if (document.getElementById("chat-wrapper").style.display == "block") return;
 
@@ -2143,7 +2117,7 @@ transform: translate(-50%, -50%);
         // Array list
         const featureList = [
             "Autoheal", "killChat", "autobreak", "nightmode", "AutoPlacer",
-            "Msync", "Ssync", "AutoReplacer", "BreakMyObj", "ASync", "AimBot"
+            "Msync", "Ssync", "AutoReplacer", "ASync", "AimBot"
         ];
 
         featureList.forEach((feature, index) => {
