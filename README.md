@@ -1,12 +1,17 @@
-# Lovey
+# Lovey mod [NOT COMPELETELY DISCONTINUED]
 Lovey mod is a advanced script for sploop.io Every features are there that you would like!
 
 Website: https://loveymod.glitch.me/
 
+Quick Note:
+ I will stop updating Lovey-mod because I'm focusing with school
+- I'm very, very sorry to disappoint you, but unfortunately Lovey Mod will not be getting any updates as school is important.
+- Lovey-mod IS NOT COMPLETELY discontinued. Lovey-mod will work until Sploop.io developers put an end to it.
+
 Download Here:
 ```js
 // ==UserScript==
-// @name         Lovey Mod - New The Best Hack of sploop.io!
+// @name         Lovey Mod - End The Best Hack of sploop.io!
 // @namespace    http://tampermonkey.net/
 // @version      Final
 // @description  https://loveymod.glitch.me
@@ -22,6 +27,7 @@ Download Here:
 
 loadstring("https://raw.githubusercontent.com/ilyaxuwu/Lovey/refs/heads/main/lovey.js")
 ```
+
 
 Features:
 - Smart AI Autoheal Supports any pings!
