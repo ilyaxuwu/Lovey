@@ -23,9 +23,8 @@ Download Here:
 // @match        https://sploop.io/
 // @icon         https://sploop.io/img/ui/favicon.png
 // @grant        none
+// @require      https://raw.githubusercontent.com/ilyaxuwu/Lovey/refs/heads/main/lovey.js
 // ==/UserScript==
-
-loadstring("https://raw.githubusercontent.com/ilyaxuwu/Lovey/refs/heads/main/lovey.js")
 ```
 
 
