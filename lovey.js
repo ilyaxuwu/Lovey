@@ -15,7 +15,7 @@
 
     Name: Lovey Mod
     Author: Ilyax
-    Version: Final vNAB (Non-Antiban version)
+    Version: Final
 
     Credits:
     Ilyax: Owner, Everything is by me, menu, and all
@@ -1530,7 +1530,7 @@ THIS IS OLD AUTOHEAL.
                 this.kills++
                 if (!H_K_E) showBorder(6)
                 if (document.getElementById("killChat").checked) {
-                    let killChat = ["Your English bad - Cku", "Learn how to make Anticheat Cku.", "Cku Quitted Abt ingame staff jokes.", "I'm better than Cku At Coding.", "Uh I use POST On Fetch - Cku", "Your Antiban is fake - Cku", "I have ur script - HitMan", "Noone skid ur trash script - Hitman", "Learn how to code JavaScript, Cku.", "HitMan dies to 200ms player 💀", "Go play doors w ilyax - HitMan", "Atilla was a reckless's dog", "Cku anticheat bypassed by crygen", "Ckumascot more like Travis scott", "nightmare dodged abt ban hackers", "nightmare get a life", "Nightmare dies to basic ahk", "Nightmare have a bad heart", "Nightmare Obeys LapaMavue", "Hackers > Developers at coding."]
+let killChat = "xd"
                     sendChat(killChat[Math.floor(Math.random() * killChat.length)]);
                 }
 
